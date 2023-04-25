@@ -2,14 +2,17 @@ import numpy as np
 from neurora.corr_cal_by_rdm import rdms_corr
 import h5py
 import time
+from neurora.rsa_plot import plot_rdm
 
 #f = h5py.File("rdms/emotion_euclidean_bycon.h5", "r")
 f = h5py.File("rdms/emotion_pearson_bycon.h5", "r")
 emotion_rdm = np.array(f["emotion"])
+#plot_rdm(emotion_rdm)
 f.close()
 f = h5py.File("rdms/auditory_euclidean_bycon.h5", "r")
 #f = h5py.File("rdms/auditory_pearson_bycon.h5", "r")
 auditory_rdm = np.array(f["auditory"])
+plot_rdm(auditory_rdm)
 f.close()
 #f = h5py.File("rdms/bhv_euclidean_bycon.h5", "r")
 f = h5py.File("rdms/bhv_pearson_bycon.h5", "r")
@@ -18,20 +21,24 @@ f.close()
 f = h5py.File("rdms/ERP_28subs_bycon.h5", "r")
 eeg_rdm = np.array(f["intents"])
 print(eeg_rdm.shape)
+eeg_rdm = eeg_rdm[:,40:,:,:]
+print(eeg_rdm.shape)
 f.close()
 
 #f = h5py.File("corrs/euclideanemotion_eeg_spearman_bycon.h5", "w")
 #f = h5py.File("corrs/pearsonemotion_eeg_spearman_bycon.h5", "w")
-#f = h5py.File("corrs/euclideanauditory_eeg_spearman_bycon.h5", "w")
+f = h5py.File("corrs/euclideanauditory_eeg_spearman_bycon.h5", "w")
 #f = h5py.File("corrs/pearsonauditory_eeg_spearman_bycon.h5", "w")
 #f = h5py.File("corrs/euclideanbhv_eeg_spearman_bycon.h5", "w")
-f = h5py.File("corrs/pearsonbhv_eeg_spearman_bycon.h5", "w")
+#f = h5py.File("corrs/pearsonbhv_eeg_spearman_bycon.h5", "w")
 #corrs = rdms_corr(emotion_rdm, eeg_rdm)
-#corrs = rdms_corr(auditory_rdm, eeg_rdm)
-corrs = rdms_corr(bhv_rdm, eeg_rdm)
+corrs = rdms_corr(auditory_rdm, eeg_rdm)
+#corrs = rdms_corr(bhv_rdm, eeg_rdm)
 #corrs = rdms_corr(emotion_rdm, eeg_rdm, method="spearman", rescale=False, permutation=True, iter=1000)
-f.create_dataset("bhv_eeg", data=corrs)
-#f.create_dataset("auditory_eeg", data=corrs)
+#f.create_dataset("emotion_eeg", data=corrs)
+f.create_dataset("auditory_eeg", data=corrs)
+#f.create_dataset("bhv_eeg", data=corrs)
+
 print('<<<<<<<<<<<<< corrs caculation finish!')
 print(emotion_rdm.shape, eeg_rdm.shape,corrs.shape)
 #print(auditory_rdm.shape, corrs.shape)
@@ -154,6 +161,6 @@ def plot_tbytsim_withstats(similarities, start_time=0, end_time=1, smooth=True, 
     plt.show()
 
     return 0
-plot_tbytsim_withstats(corrs, start_time=-0.2, end_time=1.5, p=0.05, cbpt=True, lim=[-0.5, 0.5])
+plot_tbytsim_withstats(corrs, start_time=0, end_time=1.5, p=0.05, cbpt=True, lim=[-0.5, 0.5])
 #plot_tbytsim_withstats(corrs, start_time=-0.2, end_time=1.5, time_interval=0.01, 
 #                       p=0.05, cbpt=True, stats_time=[0, 1.5], xlim=[-0.2, 1.5], ylim=[-1.0, 1.0])
